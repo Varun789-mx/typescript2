@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 function useWeatherData() {
-  const API_KEY = "fa12448144c986459f4f4e70d05ec7e4";
+  const API_KEY = process.env.REACT_APP_API_KEY;
 
   const lat = "28.6295";
   const lon = "77.3123";
