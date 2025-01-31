@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config({ path: "../../.env" });
-const connection_uri = process.env.mongoose_uri;
+
+const connection_uri: string = process.env.mongoose_uri || "";
 try {
   mongoose.connect(connection_uri);
   console.log("Connection succesfull");
@@ -21,4 +22,5 @@ const user = new mongoose.Schema(
 );
 
 const User = mongoose.model("User", user);
-module.exports = User;
+
+export { User };
