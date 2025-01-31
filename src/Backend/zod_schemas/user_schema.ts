@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const new_user = z.object({
+ const new_user = z.object({
     First_name: z.string().min(3, "First name should be atleast 3 characters long "),
     Last_name: z.string().min(3, "Last name should be atleast 3 characters long "),
     Email: z.string().email().min(3, "Email should be atleast 3 characters long "),
@@ -9,4 +9,4 @@ const new_user = z.object({
 
 })
 
-module.exports(new_user);
+export {new_user};
