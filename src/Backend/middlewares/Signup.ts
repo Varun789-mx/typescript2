@@ -1,94 +1,70 @@
+import express, { Request, Response } from "express";
 
 import cors from "cors";
+import bcrypt from "bcrypt";
 import { User } from "../../db/user.model";
 import { new_user } from "../zod_schemas/user_schema";
-import express, { Router, Request, Response } from "express";
+import { status_code } from "../Status_code";
+const Signup = express();
 const port = 4000;
 
-const New_user: Router = express.Router();
+Signup.use(cors());
+Signup.use(express.json());
 
-New_user.use(cors());
-New_user.use(express.json());
-
-enum Status_code {
-  Success = 200,
-  Bad_Request = 400,
-  Unauthorized = 401,
-  Forbidden = 403,
-  Not_Found = 404,
-  Method_Not_Allowed = 405,
-  Length_Required = 411,
-  Internal_Server_Error = 500,
-  Service_Unavailable = 503,
-  Gateway_Timeout = 504,
+interface user_fields {
+  First_name: string,
+  Last_name: string,
+  Email: string,
+  Mobile: string,
+  Password: string,
 }
 
-interface SignupRequestBody {
-  First_name: string;
-  Last_name: string;
-  Email: string;
-  Password: string;
-}
-
-New_user.post("/signup", async (req: Request<{}, {}, SignupRequestBody>, res: Response, next: express.NextFunction) => {
+Signup.post("/signup", async (req: Request, res: Response): Promise<any> => {
   try {
-    const DATA = {
+    const DATA: user_fields = {
       First_name: req.body.First_name,
       Last_name: req.body.Last_name,
       Email: req.body.Email,
-      Password: req.body.Password,
+      Mobile: req.body.Mobile,
+      Password: req.body.Password
     };
-
-    const safedata = new_user.safeParse(DATA);
-
-    if (!safedata.success) {
-      return res.status(Status_code.Length_Required).json({
-        msg: "input fields are incorrect",
-        error: safedata.error
+    const Parsed_Data = new_user.safeParse(DATA);
+    if (!Parsed_Data.success) {
+      return res.status(status_code.Bad_Request).json({
+        msg: "Incorrect inputs",
+        error: Parsed_Data.error.errors
       });
     }
-
-    const already_exist = await User.findOne({
-      Email: safedata.data.Email,
-      First_name: safedata.data.First_name,
+    const previous_user = await User.findOne({
+      Email: DATA.Email,
+      First_name: DATA.First_name,
     });
-
-    if (already_exist) {
-      return res.status(Status_code.Bad_Request).json({
-        msg: "user already exist please login",
+    if (previous_user) {
+      return res.status(status_code.Forbidden).json({
+        msg: "User already exists",
       });
     }
-    const Created_User = await User.create(safedata.data);
-    if (!Created_User) {
-      return res.status(Status_code.Service_Unavailable).json({
-        msg: "Cannot create user at this moment",
+    const Hashed_Pass = bcrypt.hashSync(DATA.Password, 10);
+    DATA.Password = Hashed_Pass;
+    const create_user = await User.create(DATA);
+    if (!create_user) {
+      return res.status(status_code.Request_timeout).json({
+        error: "User creation failed"
       });
     }
-    return res.status(Status_code.Success).json({
-      msg: "User succesfully created",
+    return res.status(status_code.Success).json({
+      msg: "User successfully created",
     });
-  }
-  catch (error) {
-    return res.status(Status_code.Gateway_Timeout).json({
-      msg: "Unable to process the request at this time",
+  } catch (error) {
+    return res.status(status_code.Failed).json({
+      msg: "Request failed",
       error: error
-    })
+    });
   }
 });
 
-const startServer = async () => {
-  try {
-    const app = express();
-    app.use('/api', New_user);
-    
-    app.listen(port, () => {
-      console.log(`🚀 Server is running on http://localhost:${port}`);
-    });
-  } catch (error) {
-    console.error("❌ Error starting server:", error);
-    process.exit(1);
-  }
-};
-
-startServer();
-
+Signup.listen(port, () => {
+  console.log(`Server started at http://localhost:${port}/signup`);
+}).on('error', (error) => {
+  console.log(`Error occurred while listening on ${port}`, error);
+});
