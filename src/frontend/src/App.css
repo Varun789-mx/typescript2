@@ -1,2 +1,49 @@
 @import "tailwindcss";
 
+* {
+    margin: 0;
+    padding: 0;
+  }
+  .first-nav {
+    transition: 0.25s ease-in;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+    align-items: center;
+    border-color: bisque;
+    box-shadow: 2px;
+  }
+  
+  .travel-nav {
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+    align-items: center;
+    background-color: aqua;
+    box-shadow: 2px;
+  }
+  div {
+    font-size: 17px;
+    font-family: Inter, sans-serif;
+    color: #000;
+    font-weight: 600;
+  }
+  #lbutton {
+    display: flex;
+    border-radius: 30px;
+    background-color: pink;
+    color: white;
+    align-items: center;
+  }
+  a {
+    text-decoration: none;
+  }
+  #lbutton :hover {
+      padding: 0;
+      margin: 0;
+    background-color: rgb(134, 130, 130);
+    border-color: rgb(134, 130, 130);
+  }
+  
