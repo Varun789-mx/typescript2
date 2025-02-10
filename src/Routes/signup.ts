@@ -1,15 +1,14 @@
-import express, { Request, Response } from "express";
+import {Router} from "express";
 import zod from "zod";
 import { getclient } from "../db/config";
 import jwt from "jsonwebtoken";	
 import cors from "cors";
 import { status_code } from "./Status_code";
 import { createuser } from "../db/Insertuser";
-const Router = express.Router();
-Router.use(express.json());
-Router.use(cors());
+export const userRouter = Router();
 const jwtsecret = "samplestring";
-const port = 5000;
+
+
 
  interface user_fields {
      firstname: string,
@@ -19,6 +18,8 @@ const port = 5000;
      password: string,
  }
 
+
+
 const signupbody = zod.object({
     firstname: zod.string(),
     lastname: zod.string(),
@@ -26,6 +27,7 @@ const signupbody = zod.object({
     mobile: zod.string().min(5, "mobile no should be atleast 10 digits long"),
     password: zod.string().min(8, "password should be atleast 8 characters long")
 });
+
 
 async function ExistingUser(email: string) {
     try {
@@ -42,14 +44,13 @@ async function ExistingUser(email: string) {
     }
 }
 
-
-Router.post('/signup', async (req: Request, res: Response): Promise<any> => {
+userRouter.post('/signup', async (req,res):Promise<any>=> {
     try {
-        const { success } = signupbody.safeParse(req.body);
-        if (!success) {
+        const data  = signupbody.safeParse(req.body);
+        if (!data.success) {
             return res.status(status_code.Success).json({
                 msg: "Incorrect inputs",
-                error: Error,
+                error: data.error,
             });
         }
         const prevuser = await ExistingUser(req.body.email);
@@ -58,13 +59,8 @@ Router.post('/signup', async (req: Request, res: Response): Promise<any> => {
                 message:"User already exists",
             });
         }
-	const adduser = createuser(req.body);
-	if(!adduser) {
-		return res.status(status_code.Failed).json({
-			message:"Error in creating user",}
-		 );
-	}
-	const token = jwt.sign({email: req.body.email},jwtsecret);
+	const adduser = await createuser(req.body);
+	const token = await jwt.sign({email: req.body.email},jwtsecret);
 	return res.status(status_code.Success).json({
 	msg:"user succesfully created",
 	token:token 
@@ -74,4 +70,4 @@ Router.post('/signup', async (req: Request, res: Response): Promise<any> => {
     }
 });
 
-export {Router};
+
