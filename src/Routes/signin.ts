@@ -32,7 +32,7 @@ async function finduser(email:string) {
 }
 }
 
-signin.post('/signin',async (req,res):Promise<any>=> {
+signin.post('/signin',(req,res):Promise<any> => {
        try{ 
        	   const {email,password} = req.body;
            const safedata = signinbody.safeParse({email,password});
