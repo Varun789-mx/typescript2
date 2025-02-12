@@ -13,7 +13,7 @@ export async function createuser(user:user_fields) {
 	 if(!client) {
 	    throw new Error("Failed to connect to db");
 	 }
-	 const insertuser = `INSERT INTO user (firstname,lastname,email,mobile,password) VALUES ($1,$2,$3,$4,$5) RETURNING id `;
+	 const insertuser = `INSERT INTO paytmuser (firstname,lastname,email,mobile,password) VALUES ($1,$2,$3,$4,$5) RETURNING id `;
 	 const uservalues = [user.firstname,user.lastname,user.email,user.mobile,user.password];
 	 let response = await client.query(insertuser,uservalues);
 	 console.log(`User succesfully created `);
