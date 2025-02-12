@@ -11,10 +11,20 @@ const signinbody = zod.object({
 	email:zod.string().email(),
 	passoword:zod.string()
 });
+async function Checkuser(email,password) { 
+	const match = await bcrypt.compare(password,hash);
+	if(match) { 
+		return true;
+	} 
+	return false;
+}
+async function finduser(email) { 
+	const client = getclient(); 
+	const findquery = `SELECT * FROM paytmuser WHERE 
 
 
 
-signin.post('/signin',(req,res):Promise<any>=> {
+signin.post('/signin',async (req,res):Promise<any>=> {
        try{ 
        	   const {email,password} = req.body;
            const safedata = signinbody.safeParse({email,password});
@@ -24,5 +34,5 @@ signin.post('/signin',(req,res):Promise<any>=> {
 				error:safedata.error
 			});
 		}
-	  const verifyuser = verifypass		
+	  
 
