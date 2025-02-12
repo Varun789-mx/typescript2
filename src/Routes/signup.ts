@@ -31,13 +31,13 @@ const jwtsecret = "samplestring";
 
  async function ExistingUser(email: string) {
      try {
-         const query = `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`;
+         const findquery = `SELECT EXISTS(SELECT * FROM paytmuser WHERE email = $1)`;
          const client = await getclient();
          if (!client) {
              throw new Error("failed to get db client");
          }
-         const result = await client.query(query, [email]);
-         return result.rows[0].exists;
+         const result = await client.query(findquery, [email]);
+         return result;
      }
      catch (error) {
          console.error("Error in checking the email", error);

@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/Routes/Status_code.ts","./src/Routes/signup.ts","./src/db/Insertuser.ts","./src/db/Usertable.ts","./src/db/config.ts"],"version":"5.7.3"}
+{"root":["./src/index.ts","./src/Routes/Status_code.ts","./src/Routes/signup.ts","./src/db/Insertuser.ts","./src/db/Usertable.ts","./src/db/config.ts","./src/db/showuser.ts"],"version":"5.7.3"}
