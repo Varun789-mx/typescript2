@@ -31,10 +31,14 @@ async function finduser(email: string) {
 		console.error("User doesn't exist please signup ");
 	}
 }
+interface userfield { 
+	email:string,
+	passwordL:string
+}
 signinroute.post('/signin', (req, res) => {
 	try {
-		const { email, password } = req.body;
-		const safedata = signinbody.safeParse({ email, password });
+		const data: req.body;
+		const safedata = signinbody.safeParse(data);
 		if (!safedata.success) {
 			return res.status(status_code.Bad_Request).json({
 				msg: "Incorrect inputs",
@@ -47,6 +51,7 @@ signinroute.post('/signin', (req, res) => {
 				msg: "Incorrect password"
 			});
 		}
+		const token = jwt.
 	}
 	catch (error) {
 		return res.status(status_code.Request_timeout).json({
