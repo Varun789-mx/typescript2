@@ -54,7 +54,6 @@ const jwtsecret = "samplestring";
 	  password:req.body.password
 	  };
          const data  = signupbody.safeParse(ruff);
-	 console.log(ruff);
          if (!data.success) {
              return res.status(status_code.Success).json({
                  msg: "Incorrect inputs",
